@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Admin</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="/css/chat.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.11.4/css/jquery.dataTables.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/plug-ins/1.10.24/i18n/French.json"></script>
+    <script>
+        $(document).ready(function() {
+            $('#example').DataTable({
+                language: {
+                    url: 'https://cdn.datatables.net/plug-ins/1.10.24/i18n/French.json'
+                }
+            });
+        });
+
+        // function fetchPage(url) {
+        //     fetch(url)
+        //         .then(function(response) {
+        //             if (response.ok) {
+        //                 return response.text();
+        //             }
+        //             throw new Error('Error: ' + response.status);
+        //         })
+        //         .then(function(data) {
+        //
+        //             document.documentElement.innerHTML = data;
+        //         })
+        //         .catch(function(error) {
+        //             console.error(error);
+        //         });
+        // }
+    </script>
+    <!-- 导航栏style -->
+    <style>
+        ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: #333;
+        }
+
+        li {
+            float: left;
+        }
+
+        li a {
+            display: block;
+            color: white;
+            text-align: center;
+            padding: 14px 16px;
+            text-decoration: none;
+        }
+
+        li a:hover:not(.active) {
+            background-color: #111;
+
+        }
+
+        .active {
+            background-color: #4CAF50;
+
+        }
+    </style>
+</head>
+
+
+
+
+
+<body>
+    <div class="container">
+        <header>
+            <h1>Page administrateur</h1>
+        </header>
+        <!-- Nav bar bootstrap 5 : https://getbootstrap.com/docs/5.0/components/navbar/ -->
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="active" aria-current="page" href="/admin/users">Accueil</a>
+                    </li>
+                    <li class="nav-item">
+                        <a  aria-current="page" href="/admin/ajoute">Ajouter un utilisateur</a>
+                    </li>
+                    <li class="nav-item">
+                        <a  aria-current="page" href="/admin/list_desactive" >Liste des utilisateurs désactivés</a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+
+        <div class="row">
+
+            <table id="example" class="table table-striped" style="width:100%">
+                <thead>
+                <tr>
+                    <th>id</th>
+                    <th>Nom</th>
+                    <th>Prenom</th>
+                    <th>mail</th>
+                    <th>password</th>
+                    <th>admin</th>
+                    <th>enable</th>
+                    <th>désactiver</th>
+                    <th>supprimer</th>
+                    <th>edit</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="user : ${users}">
+                    <td><span th:text="${user.id}"></span></td>
+                    <td><span th:text="${user.lastName}"></span></td>
+                    <td><span th:text="${user.firstName}"></span></td>
+                    <td><span th:text="${user.mail}"></span></td>
+                    <td><span th:text="${user.password}"></span></td>
+                    <td><span th:text="${user.admin}"></span></td>
+                    <td><span th:text="${user.enabled}"></span></td>
+                    <td><!--button d'activer-->
+                        <form th:if="${user.enabled}" th:action="@{/admin/disable}" method="post">
+                            <input type="hidden" name="id" th:value="${user.id}"/>
+                            <input type="submit" value="Désactivé"/>
+                        </form>
+                        <form th:unless="${user.enabled}" th:action="@{/admin/enable}" method="post">
+                            <input type="hidden" name="id" th:value="${user.id}"/>
+                            <input type="submit" value="Activé"/>
+                        </form>
+                    </td>
+                    <td><!--button de supprimer-->
+                        <form th:action="@{/admin/supprimer}" method="post">
+                            <input type="hidden" name="id" th:value="${user.id}"/>
+                            <input type="submit" value="Supprimer"/>
+                        </form>
+                    </td>
+                    <td><!--button d'édit-->
+                        <form th:action="@{/admin/edit}" method="get">
+                            <input type="hidden" name="id" th:value="${user.id}"/>
+                            <input type="submit" value="Edit"/>
+                        </form>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+
+        </div>
+
+        <footer>
+            <p>Espace Administration</p>
+        </footer>
+    </div>
+</body>
+</html>
